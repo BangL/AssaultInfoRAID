@@ -1,4 +1,5 @@
 {
+	"assaultinfo_assault": "ANGRIFF",
 	"assaultinfo_anticipation": "ANGRIFF NAHT",
 	"assaultinfo_build": "ANGRIFF: AUFBAU",
 	"assaultinfo_sustain": "ANGRIFF: HALTEN",
@@ -12,7 +13,7 @@
 	"assaultinfo_overdue": "ÜBERFÄLLIG",
 	"assaultinfo_title": "AssaultInfo",
 	"assaultinfo_enabled": "Aktiviert",
-	"assaultinfo_enabled_desc": "Infokasten anzeigen (nur Host)",
+	"assaultinfo_enabled_desc": "Infokasten anzeigen (voll als Host, reduziert als Client)",
 	"assaultinfo_show_stealth": "Stealth anzeigen",
 	"assaultinfo_show_stealth_desc": "Kasten anzeigen, solange der Raid noch im Stealth ist",
 	"assaultinfo_show_time": "Zeit anzeigen",

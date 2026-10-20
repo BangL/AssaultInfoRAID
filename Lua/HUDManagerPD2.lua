@@ -1,4 +1,5 @@
--- Host only: the assault task lives in the host's group AI.
+-- The assault task (phase, timers, force, pool) lives in the host's group AI. A client only gets the
+-- stealth state (mission element), the hunt flag (sync_assault_endless) and assault on/off (sync_assault_mode).
 
 local PANEL_W = 260
 local MIN_TITLE_SIZE = 16
@@ -8,6 +9,7 @@ local PHASE_COLORS = {
 	assaultinfo_build = "progress_orange",
 	assaultinfo_sustain = "raid_red",
 	assaultinfo_fade = "progress_green",
+	assaultinfo_assault = "raid_red",
 	assaultinfo_stealth = "raid_white",
 	assaultinfo_hunt = "raid_dark_red",
 	assaultinfo_regroup = "raid_grey",
@@ -21,7 +23,28 @@ local function fmt_time(seconds)
 end
 
 -- title id, phase time left, enemies alive, force, kills left, total time left (any may be nil)
+function AssaultInfo:get_client_info()
+	local gai = managers.groupai and managers.groupai:state()
+	if not gai then
+		return
+	end
+
+	if gai:whisper_mode() and managers.raid_job and managers.raid_job:current_job() then
+		return AssaultInfo:GetOption("show_stealth") and "assaultinfo_stealth" or nil
+	end
+	if gai._hunt_mode and gai:get_assault_mode() then
+		return "assaultinfo_hunt"
+	end
+	if gai:get_assault_mode() then
+		return "assaultinfo_assault"
+	end
+end
+
 function AssaultInfo:get_info()
+	if not Network:is_server() then
+		return self:get_client_info()
+	end
+
 	local gai = managers.groupai and managers.groupai:state()
 	local task_data = gai and gai._task_data
 	local tweak = gai and gai._tweak_data and gai._tweak_data.assault
@@ -295,7 +318,7 @@ function AssaultInfo:recreate()
 end
 
 Hooks:PostHook(HUDManager, "_setup_ingame_hud_saferect", "AssaultInfo_HUDManager_post_setup_ingame_hud_saferect", function(self)
-	if not Network:is_server() or not self:alive(PlayerBase.INGAME_HUD_SAFERECT) then
+	if not self:alive(PlayerBase.INGAME_HUD_SAFERECT) then
 		return
 	end
 	AssaultInfo:create(self:script(PlayerBase.INGAME_HUD_SAFERECT))

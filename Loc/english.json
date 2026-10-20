@@ -1,4 +1,5 @@
 {
+	"assaultinfo_assault": "ASSAULT",
 	"assaultinfo_anticipation": "ASSAULT INCOMING",
 	"assaultinfo_build": "ASSAULT: BUILD",
 	"assaultinfo_sustain": "ASSAULT: SUSTAIN",
@@ -12,7 +13,7 @@
 	"assaultinfo_overdue": "OVERDUE",
 	"assaultinfo_title": "AssaultInfo",
 	"assaultinfo_enabled": "Enabled",
-	"assaultinfo_enabled_desc": "Show the info box (host only)",
+	"assaultinfo_enabled_desc": "Show the info box (full info as host, reduced as client)",
 	"assaultinfo_show_stealth": "Show stealth",
 	"assaultinfo_show_stealth_desc": "Show the box while the raid is still stealthy",
 	"assaultinfo_show_time": "Show time",

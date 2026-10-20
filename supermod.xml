@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <mod name="AssaultInfoRAID"
-	description="Shows assault phase, time left, enemy count and kill pool in a configurable info box (host only)"
+	description="Shows assault phase, time left, enemy count and kill pool in a configurable info box (reduced as client)"
 	author="BangL"
 	version="0.1.0"
 	min_sblt_version="2.0.0"
