@@ -14,6 +14,7 @@
 	<hooks>
 		<pre hook_id="lib/entry" script_path="AssaultInfoRAID.lua"/>
 		<post hook_id="lib/managers/hudmanagerpd2" script_path="Lua/HUDManagerPD2.lua"/>
+		<post hook_id="lib/network/base/basenetworksession" script_path="Lua/Sync.lua"/>
 		<post hook_id="lib/managers/menu/menucomponentmanager" script_path="Lua/MenuComponentManager.lua"/>
 	</hooks>
 </mod>

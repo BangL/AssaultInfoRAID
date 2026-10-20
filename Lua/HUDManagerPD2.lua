@@ -1,5 +1,6 @@
 -- The assault task (phase, timers, force, pool) lives in the host's group AI. A client only gets the
--- stealth state (mission element), the hunt flag (sync_assault_endless) and assault on/off (sync_assault_mode).
+-- stealth state (mission element), the hunt flag (sync_assault_endless) and assault on/off (sync_assault_mode),
+-- unless the host runs AssaultInfo too (see Sync.lua).
 
 local PANEL_W = 260
 local MIN_TITLE_SIZE = 16
@@ -42,6 +43,11 @@ end
 
 function AssaultInfo:get_info()
 	if not Network:is_server() then
+		-- the host runs AssaultInfo too: its data, else what the client gets on its own
+		local synced = AssaultInfo.Sync and AssaultInfo.Sync:get_synced()
+		if synced then
+			return synced.title, synced.time_left, synced.enemies, synced.force, synced.pool, synced.total_left
+		end
 		return self:get_client_info()
 	end
 
@@ -245,9 +251,13 @@ function AssaultInfo:_update(t, dt)
 		return
 	end
 
-	local title, time_left, enemies, force, pool, total_left
-	if AssaultInfo:GetOption("enabled") then
-		title, time_left, enemies, force, pool, total_left = self:get_info()
+	local title, time_left, enemies, force, pool, total_left = self:get_info()
+	if Network:is_server() and AssaultInfo.Sync then
+		-- the clients get the data whether our own box is enabled or not
+		AssaultInfo.Sync:host_tick(title, time_left, enemies, force, pool, total_left)
+	end
+	if not AssaultInfo:GetOption("enabled") then
+		title = nil
 	end
 
 	self._panel:set_visible(title ~= nil)
