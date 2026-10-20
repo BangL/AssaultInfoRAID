@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<mod name="AssaultInfoRAID"
+	description="Shows assault phase, time left, enemy count and kill pool in a configurable info box (host only)"
+	author="BangL"
+	version="0.1.0"
+	min_sblt_version="2.0.0"
+	color="60 60 60">
+
+	<localization directory="Loc">
+		<loc file="english.json" language="english"/>
+		<loc file="german.json" language="german"/>
+	</localization>
+
+	<hooks>
+		<pre hook_id="lib/entry" script_path="AssaultInfoRAID.lua"/>
+		<post hook_id="lib/managers/hudmanagerpd2" script_path="Lua/HUDManagerPD2.lua"/>
+		<post hook_id="lib/managers/menu/menucomponentmanager" script_path="Lua/MenuComponentManager.lua"/>
+	</hooks>
+</mod>

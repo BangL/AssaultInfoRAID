@@ -1,0 +1,11 @@
+{
+	"enabled": true,
+	"show_stealth": true,
+	"show_time": true,
+	"show_enemies": true,
+	"show_kills_left": true,
+	"align": 1,
+	"y_pos": 0.3,
+	"scale": 1,
+	"background_alpha": 0.75
+}
