@@ -6,7 +6,7 @@
 	min_sblt_version="2.0.0"
 	color="60 60 60">
 
-<updates>
+	<updates>
 		<update identifier="assaultinforaid">
 			<host meta="https://raw.githubusercontent.com/BangL/raid-mods-meta/main/assaultinforaid.json"/>
 		</update>
