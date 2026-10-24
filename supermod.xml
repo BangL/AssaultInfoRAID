@@ -2,9 +2,15 @@
 <mod name="AssaultInfoRAID"
 	description="Shows assault phase, time left, enemy count and kill pool in a configurable info box (reduced as client)"
 	author="BangL"
-	version="0.1.0"
+	version="0.1.1"
 	min_sblt_version="2.0.0"
 	color="60 60 60">
+
+<updates>
+		<update identifier="assaultinforaid">
+			<host meta="https://raw.githubusercontent.com/BangL/raid-mods-meta/main/assaultinforaid.json"/>
+		</update>
+	</updates>
 
 	<localization directory="Loc">
 		<loc file="english.json" language="english"/>
