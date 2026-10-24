@@ -42,6 +42,11 @@ function AssaultInfo:get_client_info()
 end
 
 function AssaultInfo:get_info()
+	-- the camp is a world point that gets despawned for missions; a selected job does not mean we left it
+	if managers.raid_job and managers.raid_job:is_camp_loaded() then
+		return
+	end
+
 	if not Network:is_server() then
 		-- the host runs AssaultInfo too: its data, else what the client gets on its own
 		local synced = AssaultInfo.Sync and AssaultInfo.Sync:get_synced()
