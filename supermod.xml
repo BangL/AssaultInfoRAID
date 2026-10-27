@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<mod name="AssaultInfoRAID"
+<mod name="AssaultInfoRAID" image="icon.png"
 	description="Shows assault phase, time left, enemy count and kill pool in a configurable info box (reduced as client)"
 	author="BangL"
 	version="0.1.2"
