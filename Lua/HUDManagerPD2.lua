@@ -23,7 +23,7 @@ local function fmt_time(seconds)
 	return string.format("%d:%02d", math.floor(seconds / 60), seconds % 60)
 end
 
--- title id, phase time left, enemies alive, force, kills left, total time left (any may be nil)
+-- title id, phase time left, enemies in assault groups, force, kills left, total time left, enemies alive (any may be nil)
 function AssaultInfo:get_client_info()
 	local gai = managers.groupai and managers.groupai:state()
 	if not gai then
@@ -41,6 +41,21 @@ function AssaultInfo:get_client_info()
 	end
 end
 
+-- Every living enemy. The assault count of the game only has the units of assault groups: the retiring ones, snipers and
+-- the like are not in it, and a group is spawned as a whole, so it can be above the force.
+function AssaultInfo:count_alive()
+	local t = Application:time()
+	if not self._alive_t or t > self._alive_t then
+		self._alive_t = t + 0.25
+		local n = 0
+		for _ in pairs(managers.enemy:all_enemies()) do
+			n = n + 1
+		end
+		self._alive = n
+	end
+	return self._alive
+end
+
 function AssaultInfo:get_info()
 	-- the camp is a world point that gets despawned for missions; a selected job does not mean we left it
 	if managers.raid_job and managers.raid_job:is_camp_loaded() then
@@ -51,7 +66,7 @@ function AssaultInfo:get_info()
 		-- the host runs AssaultInfo too: its data, else what the client gets on its own
 		local synced = AssaultInfo.Sync and AssaultInfo.Sync:get_synced()
 		if synced then
-			return synced.title, synced.time_left, synced.enemies, synced.force, synced.pool, synced.total_left
+			return synced.title, synced.time_left, synced.enemies, synced.force, synced.pool, synced.total_left, synced.alive
 		end
 		return self:get_client_info()
 	end
@@ -75,7 +90,7 @@ function AssaultInfo:get_info()
 		local pool = gai:get_difficulty_dependent_value(tweak.spawn_pool) * gai:_get_balancing_multiplier(tweak.spawn_pool_balance_mul)
 		local time_left = assault.phase_end_t and assault.phase_end_t - gai._t
 		if gai._hunt_mode then
-			return "assaultinfo_hunt", nil, gai:_count_police_force("assault"), assault.force
+			return "assaultinfo_hunt", nil, gai:_count_police_force("assault"), assault.force, nil, nil, self:count_alive()
 		end
 
 		-- remaining phases after the current one, sustain at its average duration
@@ -89,7 +104,7 @@ function AssaultInfo:get_info()
 			end
 			total_left = total_left + tweak.fade_duration
 		end
-		return "assaultinfo_" .. assault.phase, time_left, gai:_count_police_force("assault"), assault.force, pool - assault.casualties, total_left
+		return "assaultinfo_" .. assault.phase, time_left, gai:_count_police_force("assault"), assault.force, pool - assault.casualties, total_left, self:count_alive()
 	end
 
 	if task_data.regroup.active then
@@ -256,10 +271,10 @@ function AssaultInfo:_update(t, dt)
 		return
 	end
 
-	local title, time_left, enemies, force, pool, total_left = self:get_info()
+	local title, time_left, enemies, force, pool, total_left, alive = self:get_info()
 	if Network:is_server() and AssaultInfo.Sync then
 		-- the clients get the data whether our own box is enabled or not
-		AssaultInfo.Sync:host_tick(title, time_left, enemies, force, pool, total_left)
+		AssaultInfo.Sync:host_tick(title, time_left, enemies, force, pool, total_left, alive)
 	end
 	if not AssaultInfo:GetOption("enabled") then
 		title = nil
@@ -301,7 +316,7 @@ function AssaultInfo:_update(t, dt)
 	local rows = 0
 	local show_enemies = enemies and AssaultInfo:GetOption("show_enemies")
 	local show_pool = pool and AssaultInfo:GetOption("show_kills_left")
-	rows = rows + (self:set_row("enemies", rows + 1, show_enemies and loc:text("assaultinfo_enemies"), show_enemies and string.format("%d / %d", enemies, force)) and 1 or 0)
+	rows = rows + (self:set_row("enemies", rows + 1, show_enemies and loc:text("assaultinfo_enemies"), show_enemies and (alive and string.format("%d  (%d / %d)", alive, enemies, force) or string.format("%d / %d", enemies, force))) and 1 or 0)
 	rows = rows + (self:set_row("pool", rows + 1, show_pool and loc:text("assaultinfo_pool"), show_pool and string.format("%d", math.max(0, math.floor(pool)))) and 1 or 0)
 
 	local target_h = self._title_h + (rows > 0 and math.round(8 * AssaultInfo:GetOption("scale")) + rows * self._row_h or 0)

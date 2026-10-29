@@ -87,7 +87,7 @@ if not AssaultInfo.Sync then
 	end
 
 	-- host: called every frame with the current info, sends it to the known peers if it changed
-	function Sync:host_tick(title, time_left, enemies, force, pool, total_left)
+	function Sync:host_tick(title, time_left, enemies, force, pool, total_left, alive)
 		if not (Network:is_server() and LuaNetworking:IsMultiplayer() and self:has_known_peers()) then
 			return
 		end
@@ -98,17 +98,18 @@ if not AssaultInfo.Sync then
 		local sent = self._sent
 		local tl_end = end_t(now, time_left)
 		local tt_end = end_t(now, total_left)
-		if sent and sent.key == key and sent.enemies == enemies and sent.force == force and sent.pool == pool
+		if sent and sent.key == key and sent.enemies == enemies and sent.alive == alive and sent.force == force and sent.pool == pool
 			and not end_changed(sent.tl_end, tl_end, self.TIME_TOLERANCE)
 			and not end_changed(sent.tt_end, tt_end, self.TIME_TOLERANCE) then
 			return
 		end
-		self._sent = { key = key, enemies = enemies, force = force, pool = pool, tl_end = tl_end, tt_end = tt_end }
+		self._sent = { key = key, enemies = enemies, alive = alive, force = force, pool = pool, tl_end = tl_end, tt_end = tt_end }
 
 		self:send_to_known_peers(self.events.state, {
 			t = key,
 			tl = round(time_left),
 			e = enemies,
+			a = alive,
 			f = force,
 			p = pool,
 			tt = round(total_left),
@@ -126,6 +127,7 @@ if not AssaultInfo.Sync then
 			title = state.title,
 			time_left = state.time_left and state.time_left - age,
 			enemies = state.enemies,
+			alive = state.alive,
 			force = state.force,
 			pool = state.pool,
 			total_left = state.total_left and state.total_left - age,
@@ -185,6 +187,7 @@ if not AssaultInfo.Sync then
 			title = title ~= "none" and title or nil,
 			time_left = tonumber(data.tl),
 			enemies = tonumber(data.e),
+			alive = tonumber(data.a),
 			force = tonumber(data.f),
 			pool = tonumber(data.p),
 			total_left = tonumber(data.tt),
