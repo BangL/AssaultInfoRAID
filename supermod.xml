@@ -8,7 +8,7 @@
 
 	<updates>
 		<update identifier="assaultinforaid">
-			<host meta="https://raw.githubusercontent.com/BangL/raid-mods-meta/main/assaultinforaid.json"/>
+			<host meta="https://raw.githubusercontent.com/BangL/raid-mods-meta/main/assaultinforaid.json" patchnotes="https://github.com/BangL/AssaultInfoRAID/blob/master/CHANGELOG.md"/>
 		</update>
 	</updates>
 
